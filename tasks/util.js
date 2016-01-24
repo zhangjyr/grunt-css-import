@@ -1,6 +1,6 @@
 var IMPORT_REG = /@import\s+[^;\n]+;/g;
-var PATH_REG = /@import\s+['"](.*)['"]/;
-var PATH_REG_WITH_URL = /@import\s+url\s*\(\s*['"](.*)['"]\s*\)/;
+var PATH_REG = /@import\s+['"]?(.*)['"]?/;
+var PATH_REG_WITH_URL = /@import\s+url\s*\(\s*['"]?(.*)['"]?\s*\)/;
 var BACKGROUND_REG = /(background[^;\}]+)url\s*\(['"]?([^\)'"]*)['"]?\)([^;\n]*)[;\}]/g;
 
 /**
