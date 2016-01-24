@@ -12,10 +12,10 @@ function parseExtraCss(content) {
     var matches = content.match(IMPORT_REG);
 
     return matches.map(function(importStr) {
-        var matches = importStr.match(PATH_REG);
+        var matches = importStr.match(PATH_REG_WITH_URL);
 
         if (!matches || !matches[1]) {
-            matches = importStr.match(PATH_REG_WITH_URL);
+            matches = importStr.match(PATH_REG);
         }
 
         if (matches && matches[1]) {
