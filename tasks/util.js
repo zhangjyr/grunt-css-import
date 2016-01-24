@@ -8,10 +8,10 @@ var BACKGROUND_REG = /(background[^;\}]+)url\s*\(['"]?([^\)'"]*)['"]?\)([^;\n]*)
  * @param content
  * @returns {Array}
  */
-function parseExtraCss(content) {
+function parseExtraCss(content, grunt) {
     var matches = content.match(IMPORT_REG);
 
-    return matches.map(function(importStr) {
+    return !matches ? [] : matches.map(function(importStr) {
         var matches = importStr.match(PATH_REG_WITH_URL);
 
         if (!matches || !matches[1]) {
@@ -21,8 +21,10 @@ function parseExtraCss(content) {
         if (matches && matches[1]) {
             return matches[1];
         }
-
-        return null;
+        else {
+            grunt.log.warn('Skip invalid import directive: ' + importStr);
+            return null;
+        }
     });
 }
 

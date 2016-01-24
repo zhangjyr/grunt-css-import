@@ -30,19 +30,26 @@ module.exports = function (grunt) {
                 }
             }).map(function(filepath) {
                 var content = grunt.file.read(filepath);
-                var relativeExtraCss = util.parseExtraCss(content);
+                var relativeExtraCss = util.parseExtraCss(content, grunt);
 
                 grunt.log.subhead('Processing file "' + filepath + '" :');
 
                 var extraCssContentArr = relativeExtraCss.map(function(importPath) {
-                    if (util.isRelativeUrl(importPath)) {
+                    if (!importPath) {
+                        return importPath;
+                    }
+                    else if (util.isRelativeUrl(importPath)) {
                         grunt.log.writeln('Found extra relative path file : ' + importPath);
                         return util.replaceExtraResourcesPath(grunt.file.read(util.fetchImportPath(filepath, importPath)), importPath);
-                    } else {
+                    } 
+                    else {
                         grunt.log.warn('Found absolute path file : ' + importPath);
                         return '@import "' + importPath + '";';
                     }
                 });
+                if (extraCssContentArr.length === 0) {
+                    return content;
+                }
 
                 var splitedCssContentArr = util.splitCssFileByImport(content);
 
@@ -50,7 +57,11 @@ module.exports = function (grunt) {
                 // 按照src顺序合并文件
                 while (Math.max(splitedCssContentArr.length, extraCssContentArr.length)) {
                     resultArr.push(splitedCssContentArr.shift());
-                    resultArr.push(extraCssContentArr.shift());
+                    var extraCssContent = extraCssContentArr.shift();
+                    // Skip invalid import directive.
+                    if (extraCssContent) {
+                        resultArr.push(extraCssContent);
+                    }
                 }
 
                 return resultArr.filter(function(e) {
